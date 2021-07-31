@@ -2,6 +2,10 @@ import { elements } from './base';
 import svgLocal from "../../img/location.svg"
 import svgMap from "../../img/map.svg"
 
+import {mapImages} from '../../img'
+
+console.log(mapImages);
+
 // Render Initial view
 export const renderHome = () => {
   const markup = `
@@ -39,8 +43,9 @@ export const renderHome = () => {
   elements.container.innerHTML = markup;
 };
 
-export const renderWeather = (result, container, place) => {
-  let markup;
+export const renderWeather = async (result, container, place) => {
+
+	let markup;
 
   // If weather of main location
   if (place === 'main') {
@@ -49,10 +54,10 @@ export const renderWeather = (result, container, place) => {
       result.country
     }</h2>
     <div class="main__weather__details">
-      <img
-        src="./img/weather/${result.weather.icon}.svg"
-        class="main__weather__details--icon animated fadeIn"
-      />
+		<span class="main__weather__details--icon animated fadeIn">
+			${mapImages[result.weather.icon]}
+		</span>
+
       <div class="main__weather__details--temp animated fadeIn">${
         result.weather.temp
       }ºC</div>
@@ -79,10 +84,10 @@ export const renderWeather = (result, container, place) => {
       result.country
     }</div>
       <div class="cities__weather__details">
-        <img
-          src="./img/weather/${result.weather.icon}.svg"
-          class="cities__weather__details--icon animated fadeIn"
-        />
+
+		<span class="main__weather__details--icon animated fadeIn">
+			${mapImages[result.weather.icon]}
+		</span>
         <div class="cities__weather__details__text">
           <div class="cities__weather__details__text--phrase animated fadeIn">
             ${result.weather.name}

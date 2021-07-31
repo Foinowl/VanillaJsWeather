@@ -1,3 +1,6 @@
+import Current from './Models/Current';
+import Saved from './Models/Saved'
+
 import DarkMode from './Models/Dark';
 
 
@@ -20,6 +23,35 @@ const darkmodeController = () => {
   } else if (state.darkMode.dark === 1) {
     base.elements.body.classList.add('dark');
     checkbox.checked = true;
+  }
+};
+
+
+const currentController = async () => {
+  // Render Loader
+  const parent = document.querySelector('.main__weather');
+  base.renderLoader(parent);
+
+  // Create state if its not created
+  if (!state.current) state.current = new Current();
+
+  // Get current coords if they are not on state already
+  if (state.current.coordAvailable() < 2) {
+    await state.current.getCoords();
+  }
+
+  // Get weather for current location
+  if (state.current.coordAvailable() === 2) {
+    await state.current.getWeather();
+
+    // Clear loader
+    base.clearLoader(parent);
+
+    // Add data set
+    parent.setAttribute('data-id', state.current.coords);
+
+    // Render weather
+    homeView.renderWeather(state.current, parent, 'main');
   }
 };
 
@@ -56,4 +88,12 @@ window.addEventListener("load", () => {
 	state.darkMode = new DarkMode();
 	state.darkMode.readLocal();
 	darkmodeController();
+
+
+	state.saved = new Saved();
+
+	// Read data from the local storage
+	state.saved.readLocal();
+
+	currentController()
 })
