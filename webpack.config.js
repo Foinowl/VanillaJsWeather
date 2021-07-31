@@ -21,12 +21,9 @@ module.exports = {
     new MomentLocalesPlugin(),
   ],
   module: {
+
     rules: [
-		{
-		//IMAGE LOADER
-		test: /\.(jpe?g|png|gif|svg)$/i,
-		loader:'file-loader'
-		},
+{ test:/\.svg$/, loader: 'svg-inline-loader' },
       {
         test: /\.m?js$/,
         exclude: /(node_modules|bower_components)/,
@@ -45,7 +42,6 @@ module.exports = {
           'sass-loader', 
         ],
       },
-    // { test:/\.svg$/, loader: 'svg-inline-loader' },
     ],
   },
 };

@@ -40,10 +40,13 @@
   margin-bottom: 3rem;
 
   &__icon {
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 3rem;
+    height: 3rem;
     margin-right: 5px;
-    fill: var(--color-primary-dark);
+	
+	svg{
+		fill: var(--color-primary-pre-dark);
+	}
   }
 
   &__text {
@@ -86,10 +89,13 @@
     margin-bottom: 1px;
 
     &__icon {
-      width: 1.8rem;
-      height: 1.8rem;
+      width: 2.2rem;
+      height: 2.2rem;
       margin-right: 5px;
-      fill: var(--color-primary-dark);
+
+	  svg{
+		fill: var(--color-primary-pre-dark);
+	  }
     }
 
     &__text {
