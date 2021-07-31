@@ -22,6 +22,11 @@ module.exports = {
   ],
   module: {
     rules: [
+		{
+		//IMAGE LOADER
+		test: /\.(jpe?g|png|gif|svg)$/i,
+		loader:'file-loader'
+		},
       {
         test: /\.m?js$/,
         exclude: /(node_modules|bower_components)/,
@@ -40,6 +45,7 @@ module.exports = {
           'sass-loader', 
         ],
       },
+    // { test:/\.svg$/, loader: 'svg-inline-loader' },
     ],
   },
 };

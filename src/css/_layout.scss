@@ -1,0 +1,55 @@
+.container {
+  width: 100%;
+  max-width: 65rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 3rem 2rem;
+
+  @media only screen and (max-width: $bp-tiny) {
+    padding: 2rem 1rem;
+  }
+}
+
+
+.otherLocal {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 2rem;
+
+  @media only screen and (max-width: $bp-tiny) {
+    padding: 1rem;
+  }
+}
+
+
+.error__message {
+  color: var(--color-red-error);
+  font-size: 1.6rem;
+  font-weight: 500;
+  padding: 2rem;
+  text-align: center;
+}
+
+
+.title {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 3rem;
+
+  &__icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    margin-right: 5px;
+    fill: var(--color-primary-dark);
+  }
+
+  &__text {
+    font-size: 1.7rem;
+    position: relative;
+    top: 1px;
+    font-weight: 500;
+  }
+}
