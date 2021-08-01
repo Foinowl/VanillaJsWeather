@@ -2,6 +2,7 @@ import Current from './Models/Current';
 import Saved from './Models/Saved'
 import Forecast from "./Models/Forecast"
 import Others from "./Models/Others"
+import Search from './Models/Search';
 
 import DarkMode from './Models/Dark';
 
@@ -9,7 +10,7 @@ import DarkMode from './Models/Dark';
 import * as base from './Views/base';
 import * as homeView from './Views/homeView';
 import * as forecastView from './Views/forecastView';
-// import * as searchView from './Views/searchView';
+import * as searchView from './Views/searchView';
 
 import '../css/main.scss';
 
@@ -102,33 +103,49 @@ const forescastController = async (current, data, other) => {
 }
 
 
-const savedController = (id) => {
-	if (!state.saved) state.saved = new Saved()
+async function searchController(e) {
+  e.preventDefault();
 
-	// if location isn't saved already, save it
-	if (!state.saved.checkifSaved(id)) {
-		// add the location
-		state.saved.addLocation(id)
+  if (!this.value) return;
+  state.search = new Search(this.value);
 
-		state.saved.saveLocal()
+  const parent = document.querySelector('.search__results');
+  base.renderLoader(parent);
 
-		homeView.renderHome()
-		darkmodeController()
-		currentController()
-		otherController()
-	}
+  await state.search.getResults();
 
-	// if its saved, remove
-	else {
-		// delete location
-		state.saved.deleteLocation(id)
+  base.clearLoader(parent);
 
-		// Remove background color
-		searchView.removeSaved(id)
+  searchView.clearSearch();
 
-		// update local storage
-		state.saved.saveLocal()
-	}
+  if (!state.search.results) {
+    const msg = 'There were no results, sorry!';
+    base.renderError(parent, msg);
+  }
+
+  // Otherwise, show them
+  else {
+    state.search.results.forEach(res => {
+      // If location is saved, pass true on 2nd parameter
+      const isSaved = state.saved.checkifSaved(res.id);
+      searchView.renderResults(res, isSaved);
+    });
+  }
+}
+
+const savedController = id => {
+  if (!state.saved) state.saved = new Saved();
+
+  if (!state.saved.checkifSaved(id)) {
+    state.saved.addLocation(id);
+
+    state.saved.saveLocal();
+
+    homeView.renderHome();
+    darkmodeController();
+    currentController();
+    otherController();
+  }
 }
 
 base.elements.container.addEventListener('click', e => {
