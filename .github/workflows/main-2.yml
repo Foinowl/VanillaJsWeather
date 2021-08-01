@@ -1,0 +1,31 @@
+name: Test Build
+
+on:
+  push:
+    branches: 'master'
+
+jobs:
+  check-and-publish:
+    name: "Test job"
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checkout source code"
+        uses: actions/checkout@v2
+      - name: "Setup Node.js"
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14
+          registry-url: https://registry.npmjs.org/
+        
+      - name: "Install dependencies"
+        run: npm install
+      - name: "Npm publish"
+        run: npm run dev
+        env:
+          APIKEY: ${{ secrets.APIKEY }}
+        
+      - name: Deploy 🚀
+        uses: Foinowl/github-pages-deploy-action@3.6.2
+        with:
+          BRANCH: gh-pages
+          FOLDER: dist
