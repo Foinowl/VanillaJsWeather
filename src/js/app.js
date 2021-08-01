@@ -1,13 +1,15 @@
 import Current from './Models/Current';
 import Saved from './Models/Saved'
+import Forecast from "./Models/Forecast"
+import Others from "./Models/Others"
 
 import DarkMode from './Models/Dark';
 
 
 import * as base from './Views/base';
 import * as homeView from './Views/homeView';
+import * as forecastView from './Views/forecastView';
 // import * as searchView from './Views/searchView';
-// import * as forecastView from './Views/forecastView';
 
 import '../css/main.scss';
 
@@ -55,6 +57,79 @@ const currentController = async () => {
   }
 };
 
+const otherController = () => {
+	// Get parent div
+	const parent = document.querySelector(".cities")
+
+	if (state.saved.checkSaved() === 0) {
+		base.renderError(
+			parent,
+			"You have no saved cities. Click the button above to add them!"
+		)
+		return
+	}
+
+	if (!state.others) state.others = new Others()
+
+	if (state.others.weatherPresent() > 0) state.others.clearWeather()
+
+	base.renderLoader(parent)
+
+	state.saved.saved.forEach(async (location, i, arr) => {
+		const weather = await state.others.getWeather(location)
+		homeView.renderWeather(weather, parent, "other")
+		// if last iteration, clear loader
+		if (i === arr.length - 1) {
+			base.clearLoader(parent)
+			homeView.renderDeleteAll(parent)
+		}
+	})
+}
+
+const forescastController = async (current, data, other) => {
+	if (current && data) state.forecast = new Forecast(current, data)
+
+	forecastView.renderView(current, data, other)
+
+	const parent = document.querySelector(".days")
+	base.renderLoader(parent)
+
+	await state.forecast.getForecast()
+
+	state.forecast.weather.forEach((el) => forecastView.renderResult(el, parent))
+
+	base.clearLoader(parent)
+}
+
+
+const savedController = (id) => {
+	if (!state.saved) state.saved = new Saved()
+
+	// if location isn't saved already, save it
+	if (!state.saved.checkifSaved(id)) {
+		// add the location
+		state.saved.addLocation(id)
+
+		state.saved.saveLocal()
+
+		homeView.renderHome()
+		darkmodeController()
+		currentController()
+		otherController()
+	}
+
+	// if its saved, remove
+	else {
+		// delete location
+		state.saved.deleteLocation(id)
+
+		// Remove background color
+		searchView.removeSaved(id)
+
+		// update local storage
+		state.saved.saveLocal()
+	}
+}
 
 base.elements.container.addEventListener('click', e => {
   const closeBtn = e.target.closest('.close-popup');
@@ -78,6 +153,85 @@ base.elements.container.addEventListener('click', e => {
     }
   }
 
+
+    if (removeBtnAll) {
+		state.saved.deleteAllLocations()
+		base.clearUI()
+		homeView.renderHome()
+		currentController()
+		otherController()
+	}
+
+	if (removeBtn && removeBtn.dataset.id) {
+		const id = [parseInt(removeBtn.dataset.id, 10)]
+		state.saved.deleteLocation(id)
+		base.clearUI()
+		homeView.renderHome()
+		darkmodeController()
+		currentController()
+		otherController()
+	}
+
+	if (closeBtn) {
+		base.clearUI()
+		homeView.renderHome()
+		darkmodeController()
+		currentController()
+		otherController()
+	}
+
+
+	if (removeBtn && removeBtn.dataset.id) {
+		const id = [parseInt(removeBtn.dataset.id, 10)]
+		state.saved.deleteLocation(id)
+		// Render home
+		base.clearUI()
+		homeView.renderHome()
+		darkmodeController()
+		currentController()
+		otherController()
+	}
+
+	if (closeBtn) {
+		// Render home
+		base.clearUI()
+		homeView.renderHome()
+		darkmodeController()
+		currentController()
+		otherController()
+	}
+
+	// If city card clicked
+	if (cityCard && cityCard.dataset.id) {
+		const id = [parseInt(cityCard.dataset.id, 10)]
+		const current = state.others.returnWeather(id)
+		forescastController(current, id, true)
+	}
+
+	// If current card clicked
+	if (currentCard && currentCard.dataset.id) {
+		const coords = currentCard.dataset.id.split(",").map(JSON.parse)
+		const { current } = state
+		if (coords.length === 2) forescastController(current, coords, false)
+	}
+
+	if (addCityBtn) {
+		// Clear UI
+		base.clearUI()
+		// Render search view
+		searchView.renderSearch()
+
+		// Get form and add event listener to it
+		const form = document.querySelector(".search__form")
+		const input = document.querySelector(".search__form__input")
+		form.addEventListener("submit", searchController)
+		input.addEventListener("change", searchController)
+	}
+
+	if (searchItem) {
+		const id = parseInt(searchItem.dataset.id, 10)
+		savedController(id)
+	}
 })
 
 window.addEventListener("load", () => {
@@ -96,4 +250,5 @@ window.addEventListener("load", () => {
 	state.saved.readLocal();
 
 	currentController()
+	otherController()
 })

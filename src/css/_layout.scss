@@ -11,8 +11,18 @@
   }
 }
 
+.current {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  margin-bottom: 2.5rem;
 
-.otherLocal {
+  @media only screen and (max-width: $bp-tiny) {
+    padding: 1rem;
+  }
+}
+
+.other {
   display: flex;
   flex-direction: column;
   flex: 1;

@@ -1,12 +1,10 @@
 import { elements } from './base';
 import svgLocal from "../../img/location.svg"
 import svgMap from "../../img/map.svg"
+import svgPlus from "../../img/plus.svg"
 
 import {mapImages} from '../../img'
 
-console.log(mapImages);
-
-// Render Initial view
 export const renderHome = () => {
   const markup = `
     <div class="darkmode">
@@ -34,12 +32,12 @@ export const renderHome = () => {
       <div class="cities">
       </div>
       <button class="add__city animated fadeIn">
-        <svg class="add__city--icon">
-          <use xlink:href="./img/symbol-defs.svg#icon-plus"></use>
-        </svg>
+	  	<span class="add__city--icon">
+	  		${svgPlus}
+		</span>
       </button>
     </div>
-  `;
+  `
   elements.container.innerHTML = markup;
 };
 
