@@ -2,7 +2,7 @@
 	"name": "weather-app",
 	"version": "1.0.0",
 	"description": "Weather App using an API",
-	"main": "index.js",
+	"main": "index.html",
 	"scripts": {
 		"dev": "webpack --mode development",
 		"build": "webpack --mode production",
